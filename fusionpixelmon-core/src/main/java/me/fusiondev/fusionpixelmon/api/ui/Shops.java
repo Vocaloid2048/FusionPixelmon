@@ -27,11 +27,16 @@ import me.fusiondev.fusionpixelmon.modules.pokedesigner.ui.FormShop;
 import me.fusiondev.fusionpixelmon.modules.pokedesigner.ui.EvolutionShop;
 import me.fusiondev.fusionpixelmon.modules.pokedesigner.ui.NickShop;
 import me.fusiondev.fusionpixelmon.modules.pokedesigner.ui.MoveShop;
+import me.fusiondev.fusionpixelmon.voc.ShopConfig;
+import me.fusiondev.fusionpixelmon.voc.TranslateConfig;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public abstract class Shops {
+
+    ShopConfig config = FusionPixelmon.getInstance().getConfiguration().getShopConfig();
+    TranslateConfig Tconfig = FusionPixelmon.getInstance().getConfiguration().getTranslationConfig();
 
     /**
      * The player currently using the Shop
@@ -120,7 +125,7 @@ public abstract class Shops {
      */
     protected void initShops() {
         PokeDesignerConfig config = FusionPixelmon.getInstance().getConfiguration().getPokeDesignerConfig();
-        for (Shops.Options option : Shops.Options.values()) {
+        for (Options option : Options.values()) {
             if (config.existsShop(option.name().toLowerCase()) && config.getShopNamed(option.name().toLowerCase()).isEnabled()) {
                 try {
                     shops.putIfAbsent(option, option.getShopClass().getDeclaredConstructor(Shops.class).newInstance(this));
@@ -135,18 +140,71 @@ public abstract class Shops {
      * Lists the different shop options with their properties to show in the main shop.
      */
     public enum Options {
-        LEVEL(11, "Level", "level", LevelShop.class, FusionPixelmon.getRegistry().getPixelmonUtils().getPixelmonItemStack("rare_candy")),
-        ABILITY(13, "Ability", "ability", AbilityShop.class, FusionPixelmon.getRegistry().getPixelmonUtils().getPixelmonItemStack("ability_capsule")),
-        NATURE(15, "Nature", "nature", NatureShop.class, FusionPixelmon.getRegistry().getPixelmonUtils().getPixelmonItemStack("ever_stone")),
-        IVEV(20, "IVs/EVs", "IVs/EVs", IVEVShop.class, FusionPixelmon.getRegistry().getPixelmonUtils().getPixelmonItemStack("destiny_knot")),
-        GENDER(22, "Gender", "gender", GenderShop.class, FusionPixelmon.getRegistry().getPixelmonUtils().getPixelmonItemStack("full_incense")),
-        GROWTH(24, "Growth", "growth", GrowthShop.class, FusionPixelmon.getRegistry().getItemTypesRegistry().DYE().to().setColour(DyeColor.WHITE)),
-        SHINY(29, "Shiny", "shininess", ShinyShop.class, FusionPixelmon.getRegistry().getPixelmonUtils().getPixelmonItemStack("light_ball")),
-        POKEBALL(31, "Pokeball", "pokeball", PokeballShop.class, FusionPixelmon.getRegistry().getPixelmonUtils().getPixelmonItemStack("poke_ball")),
-        FORM(33, "Form", "form", FormShop.class, FusionPixelmon.getRegistry().getPixelmonUtils().getPixelmonItemStack("meteorite")),
-        EVOLUTION(4, "Evolution", "evolution", EvolutionShop.class, FusionPixelmon.getRegistry().getPixelmonUtils().getPixelmonItemStack("fire_stone")),
-        NICK(2, "Nick", "nick colour and style", NickShop.class, FusionPixelmon.getRegistry().getPixelmonUtils().getPixelmonItemStack("ruby")),
-        MOVE(6, "Moves", "moves", MoveShop.class, FusionPixelmon.getRegistry().getPixelmonUtils().getPixelmonItemStack("tm1"));
+
+        LEVEL(11, LEVELS(), "level", LevelShop.class, FusionPixelmon.getRegistry().getPixelmonUtils().getPixelmonItemStack("rare_candy")),
+        ABILITY(13, ABILITYS(), "ability", AbilityShop.class, FusionPixelmon.getRegistry().getPixelmonUtils().getPixelmonItemStack("ability_capsule")),
+        NATURE(15, NATURES(), "nature", NatureShop.class, FusionPixelmon.getRegistry().getPixelmonUtils().getPixelmonItemStack("ever_stone")),
+        IVEV(20, IVEVS(), "IVs/EVs", IVEVShop.class, FusionPixelmon.getRegistry().getPixelmonUtils().getPixelmonItemStack("destiny_knot")),
+        GENDER(22, GENDERS(), "gender", GenderShop.class, FusionPixelmon.getRegistry().getPixelmonUtils().getPixelmonItemStack("full_incense")),
+        GROWTH(24, GROWTHS(), "growth", GrowthShop.class, FusionPixelmon.getRegistry().getItemTypesRegistry().DYE().to().setColour(DyeColor.WHITE)),
+        SHINY(29, SHINYS(), "shininess", ShinyShop.class, FusionPixelmon.getRegistry().getPixelmonUtils().getPixelmonItemStack("light_ball")),
+        POKEBALL(31, POKEBALLS(), "pokeball", PokeballShop.class, FusionPixelmon.getRegistry().getPixelmonUtils().getPixelmonItemStack("poke_ball")),
+        FORM(33, FORMS(), "form", FormShop.class, FusionPixelmon.getRegistry().getPixelmonUtils().getPixelmonItemStack("meteorite")),
+        EVOLUTION(4, EVOLUTIONS(), "evolution", EvolutionShop.class, FusionPixelmon.getRegistry().getPixelmonUtils().getPixelmonItemStack("fire_stone")),
+        NICK(2, NICKS(), "nick colour and style", NickShop.class, FusionPixelmon.getRegistry().getPixelmonUtils().getPixelmonItemStack("ruby")),
+        MOVE(6, MOVES(), "moves", MoveShop.class, FusionPixelmon.getRegistry().getPixelmonUtils().getPixelmonItemStack("tm1"));
+
+        private static String MOVES() {
+            ShopConfig config2 = FusionPixelmon.getInstance().getConfiguration().getShopConfig();
+            return config2.ShopMOVE();
+        }
+        private static String NICKS() {
+            ShopConfig config2 = FusionPixelmon.getInstance().getConfiguration().getShopConfig();
+            return config2.ShopNICK();
+        }
+        private static String EVOLUTIONS() {
+            ShopConfig config2 = FusionPixelmon.getInstance().getConfiguration().getShopConfig();
+            return config2.ShopEVOLUTION();
+        }
+        private static String FORMS() {
+            ShopConfig config2 = FusionPixelmon.getInstance().getConfiguration().getShopConfig();
+            return config2.ShopFORM();
+        }
+        private static String POKEBALLS() {
+            ShopConfig config2 = FusionPixelmon.getInstance().getConfiguration().getShopConfig();
+            return config2.ShopPOKEBALL();
+        }
+        private static String SHINYS() {
+            ShopConfig config2 = FusionPixelmon.getInstance().getConfiguration().getShopConfig();
+            return config2.ShopSHINY();
+        }
+        private static String GROWTHS() {
+            ShopConfig config2 = FusionPixelmon.getInstance().getConfiguration().getShopConfig();
+            return config2.ShopGROWTH();
+        }
+        private static String GENDERS() {
+            ShopConfig config2 = FusionPixelmon.getInstance().getConfiguration().getShopConfig();
+            return config2.ShopGENDER();
+        }
+
+        private static String IVEVS() {
+            ShopConfig config2 = FusionPixelmon.getInstance().getConfiguration().getShopConfig();
+            return config2.ShopIVEV();
+        }
+
+        private static String NATURES() {
+            ShopConfig config2 = FusionPixelmon.getInstance().getConfiguration().getShopConfig();
+            return config2.ShopNATURE();
+        }
+
+        private static String LEVELS() {
+            ShopConfig config2 = FusionPixelmon.getInstance().getConfiguration().getShopConfig();
+            return config2.ShopLEVEL();
+        }
+        private static String ABILITYS() {
+            ShopConfig config2 = FusionPixelmon.getInstance().getConfiguration().getShopConfig();
+            return config2.ShopABILITY();
+        }
 
         private final int slot;
         private final String name;
@@ -211,6 +269,7 @@ public abstract class Shops {
         this.pokemon = pokemon;
 
         PokeDesignerConfig config = FusionPixelmon.getInstance().getConfiguration().getPokeDesignerConfig();
+        ShopConfig config2 = FusionPixelmon.getInstance().getConfiguration().getShopConfig();
         bank = getBank(config);
 
         InvPage pagePokeEditor = new InvPage("§8" + guiTitle, SHOP_ID, 6);
@@ -224,15 +283,15 @@ public abstract class Shops {
         InvItem airItem = new InvItem(reg.getItemTypesRegistry().AIR().to(), "");
 
         AbstractItemStack confirmInvStack = reg.getItemTypesRegistry().DYE().to().setColour(DyeColor.LIME);
-        InvItem confirmInvItem = new InvItem(confirmInvStack, "§a§lConfirm");
-        confirmInvItem.setLore("This will take you to", "the final checkout page.");
+        InvItem confirmInvItem = new InvItem(confirmInvStack, "§a§l"+config2.ShopConfirm());
+        confirmInvItem.setLore(config2.ShopCheckoutAsk());
 
         AbstractItemStack cancelInvStack = reg.getItemTypesRegistry().DYE().to().setColour(DyeColor.RED);
-        InvItem cancelInvItem = new InvItem(cancelInvStack, "§4§lCancel");
-        InvItem curr = new InvItem(FusionPixelmon.getRegistry().getPixelmonUtils().getPixelmonItemStack("grass_gem"), "§2Current Balance: §a" + bank.balance(player));
+        InvItem cancelInvItem = new InvItem(cancelInvStack, "§4§l"+config2.ShopCancel());
+        InvItem curr = new InvItem(FusionPixelmon.getRegistry().getPixelmonUtils().getPixelmonItemStack("grass_gem"), config2.ShopCurrBalance() + bank.balance(player));
 
         IPokemonWrapper pokemonWrapper = new PokemonWrapper(pokemon);
-        InvItem pokeItem = new InvItem(FusionPixelmon.getRegistry().getPixelmonUtils().getPokeSprite(pokemon, true), "§b§lSelected Pokemon");
+        InvItem pokeItem = new InvItem(FusionPixelmon.getRegistry().getPixelmonUtils().getPokeSprite(pokemon, true), "§b§l"+config2.ShopChoosedPokemon());
         pokeItem.setLoreWait(
                 pokemonWrapper.getTitle(),
                 pokemonWrapper.getAbility(),
@@ -269,7 +328,7 @@ public abstract class Shops {
 
 
         pagePokeEditor.setItem(17, confirmInvItem, event -> {
-            InvPage pageCheckout = new InvPage("§8Checkout", "pokecheckout", 5);
+            InvPage pageCheckout = new InvPage("§8"+config2.ShopCheckoutTitle(), "pokecheckout", 5);
             pageCheckout.getEventHandler().add(Event.CLOSE_INVENTORY, (event1, player) -> resetSelectedOptions(false));
             pageCheckout.setBackground(emptyItem);
             pageCheckout.setItemRange(10, 16, airItem);
@@ -282,45 +341,45 @@ public abstract class Shops {
             if (bank.canAfford(player, totalCost)) {
                 confirmInvItem1.getItemStack().setColour(DyeColor.LIME);
                 confirmInvItem1.setLore(
-                        "Your total cost is: §c" + bank.getCurrencySymbol(totalCost) + "§7.",
+                        config2.ShopConfirmInfo1() + bank.getCurrencySymbol(totalCost) + "§7.",
                         "",
-                        "Clicking this button will confirm your purchase.",
-                        "Once clicked, changes cannot be reversed.",
+                        config2.ShopConfirmInfo2(),
+                        config2.ShopConfirmInfo3(),
                         "",
-                        "Your updated balance will be §a" + bank.getCurrencySymbol(bank.balance(player).intValue() - totalCost) + "§7."
+                        config2.ShopConfirmInfo4() + bank.getCurrencySymbol(bank.balance(player).intValue() - totalCost) + "§7."
                 );
             } else {
                 confirmInvItem1.getItemStack().setColour(DyeColor.GRAY);
                 confirmInvItem1.setLore(
-                        "Your total cost is: §c" + bank.getCurrencySymbol(totalCost) + "§7.",
+                        config2.ShopConfirmInfo1() + bank.getCurrencySymbol(totalCost) + "§7.",
                         "",
-                        "§c§lYou are not able to make this purchase."
+                        config2.ShopConfirmInfoLackOfMoney()
                 );
             }
 
             pageCheckout.setItem(33, confirmInvItem1, event1 -> {
                 if (!bank.canAfford(player, totalCost)) {
-                    player.sendMessage(Color.RED + "You are not able to make this transaction");
+                    player.sendMessage(Color.RED + config2.ShopConfirmInfoError());
                     return;
                 }
 
                 bank.withdraw(player, totalCost);
                 // might not need to reset while closing, cause closing event handles it
-                HashMap<Shops.Options, Object> hash = new HashMap<>(getSelectedOptions());
+                HashMap<Options, Object> hash = new HashMap<>(getSelectedOptions());
                 resetSelectedOptions(true);
                 player.closeInventory();
-                for (Map.Entry<Shops.Options, Object> e : hash.entrySet()) {
+                for (Map.Entry<Options, Object> e : hash.entrySet()) {
                     Object result = e.getValue();
                     shops.get(e.getKey()).purchaseAction(result);
                 }
-                player.sendMessage(Color.GREEN + "Successfully edited your Pokemon!");
+                player.sendMessage(Color.GREEN + config2.ShopConfirmDONE());
             });
             pageCheckout.setItem(31, curr);
 
 
-            InvItem purchaseItem = new InvItem(reg.getItemTypesRegistry().PAPER(), "§a§lPurchasing");
+            InvItem purchaseItem = new InvItem(reg.getItemTypesRegistry().PAPER(), "§a§l"+config2.ShopBuy());
             List<String> lore = new ArrayList<>();
-            for (Map.Entry<Shops.Options, Object> entry : getSelectedOptions().entrySet()) {
+            for (Map.Entry<Options, Object> entry : getSelectedOptions().entrySet()) {
                 if (shops.get(entry.getKey()).hasPurchaseSummary()) {
                     lore.addAll(shops.get(entry.getKey()).purchaseSummary(entry.getKey(), entry.getValue()));
                 } else {
@@ -339,7 +398,7 @@ public abstract class Shops {
         });
 
         if (FusionPixelmon.getModule().equals("forge")) {
-            curr.setLore(Color.DARK_GRAY + "[click to refresh]");
+            curr.setLore(Color.DARK_GRAY + config2.ShopPressRefresh());
             pagePokeEditor.setItem(49, curr);
         }
 
@@ -348,9 +407,9 @@ public abstract class Shops {
             char col = 'c';
             if (bank.balance(player).intValue() > calculateCost()) col = 'a';
             if (FusionPixelmon.getModule().equals("forge"))
-                curr.setLore("§" + col + "Current Cost: " + calculateCost(), Color.DARK_GRAY + "[click to refresh]");
+                curr.setLore("§" + col + config2.ShopCurrentCost()+" " + calculateCost(), Color.DARK_GRAY + config2.ShopPressRefresh());
             else
-                curr.setLore("§" + col + "Current Cost: " + calculateCost());
+                curr.setLore("§" + col + config2.ShopCurrentCost()+" " + calculateCost());
             pagePokeEditor.setDynamicItem(49, curr);
         });
 
@@ -359,13 +418,25 @@ public abstract class Shops {
         // Items
         pages.add(pagePokeEditor);
 
-        for (Map.Entry<Shops.Options, BaseShop> entry : shops.entrySet()) {
+        for (Map.Entry<Options, BaseShop> entry : shops.entrySet()) {
             InvItem item = new InvItem(entry.getKey().getItemStack(), "§3§l" + entry.getKey().getName());
+            String changeS = entry.getKey().getModifyWhat();
+            if (entry.getKey().getModifyWhat().equals("nick colour and style")){changeS = config2.ShopNICK();}
+            if (entry.getKey().getModifyWhat().equals("level")){changeS = config2.ShopLEVEL();}
+            if (entry.getKey().getModifyWhat().equals("Ivs/EVs")){changeS = config2.ShopIVEV();}
+            if (entry.getKey().getModifyWhat().equals("shininess")){changeS = config2.ShopSHINY();}
+            if (entry.getKey().getModifyWhat().equals("evolution")){changeS = config2.ShopEVOLUTION();}
+            if (entry.getKey().getModifyWhat().equals("ability")){changeS = config2.ShopABILITY();}
+            if (entry.getKey().getModifyWhat().equals("gender")){changeS = config2.ShopGENDER();}
+            if (entry.getKey().getModifyWhat().equals("pokeball")){changeS = config2.ShopPOKEBALL();}
+            if (entry.getKey().getModifyWhat().equals("moves")){changeS = config2.ShopMOVE();}
+            if (entry.getKey().getModifyWhat().equals("nature")){changeS = config2.ShopNATURE();}
+            if (entry.getKey().getModifyWhat().equals("growth")){changeS = config2.ShopGROWTH();}
+            if (entry.getKey().getModifyWhat().equals("form")){changeS = config2.ShopFORM();}
             item.setLore(
-                    "§7Click here if you wish to",
-                    "modify your Pokemon's " + entry.getKey().getModifyWhat() + ".",
+                    config2.ShopEditAskPart1() + changeS + config2.ShopEditAskPart2(),
                     "",
-                    "§aPrices:",
+                    config2.ShopPrice(),
                     entry.getValue().getPricesSummary()
             );
             InvPage page = entry.getValue().buildPage();
@@ -382,7 +453,7 @@ public abstract class Shops {
      *
      * @return the config object of the shop.
      */
-    public PokeDesignerConfig.ShopConfig getShopConfig(Shops.Options option) {
+    public PokeDesignerConfig.ShopConfig getShopConfig(Options option) {
         return FusionPixelmon.getInstance()
                 .getConfiguration()
                 .getPokeDesignerConfig()
@@ -397,7 +468,7 @@ public abstract class Shops {
      * @param defaultPrice the default price.
      * @return the price of the key from the shop config; or the defaultPrice if cant.
      */
-    public int getPriceOf(Shops.Options option, String key, int defaultPrice) {
+    public int getPriceOf(Options option, String key, int defaultPrice) {
         PokeDesignerConfig.ShopConfig shop = getShopConfig(option);
         return shop != null ? shop.getPrices().getOrDefault(key, defaultPrice) : defaultPrice;
     }

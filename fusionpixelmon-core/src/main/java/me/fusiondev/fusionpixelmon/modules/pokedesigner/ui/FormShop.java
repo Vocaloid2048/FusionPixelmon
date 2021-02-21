@@ -3,10 +3,14 @@ package me.fusiondev.fusionpixelmon.modules.pokedesigner.ui;
 import com.pixelmonmod.pixelmon.api.pokemon.Pokemon;
 import com.pixelmonmod.pixelmon.api.pokemon.PokemonSpec;
 import com.pixelmonmod.pixelmon.enums.forms.IEnumForm;
+import me.fusiondev.fusionpixelmon.FusionPixelmon;
 import me.fusiondev.fusionpixelmon.api.inventory.InvItem;
 import me.fusiondev.fusionpixelmon.api.inventory.InvPage;
 import me.fusiondev.fusionpixelmon.api.ui.BaseShop;
 import me.fusiondev.fusionpixelmon.api.ui.Shops;
+import me.fusiondev.fusionpixelmon.voc.EvolutionConfig;
+import me.fusiondev.fusionpixelmon.voc.FormConfig;
+import me.fusiondev.fusionpixelmon.voc.TranslateConfig;
 
 import java.util.List;
 
@@ -20,15 +24,17 @@ public class FormShop extends BaseShop {
         return Shops.Options.FORM;
     }
 
+    FormConfig config = FusionPixelmon.getInstance().getConfiguration().getFormConfig();
+    TranslateConfig Tconfig = FusionPixelmon.getInstance().getConfiguration().getTranslationConfig();
     @Override
     public InvPage buildPage() {
-        Builder builder = new Builder("§0Form Modification", "pokeeditor-form", 6)
-                .setInfoItemData("Form Info",
-                        "To select a form for your Pokemon",
-                        "select one of the above options.",
+        Builder builder = new Builder("§0"+config.FormTitle(), "pokeeditor-form", 6)
+                .setInfoItemData(config.FormInfoTitle(),
+                        config.FormInfoString1(),
+                        config.FormInfoString2(),
                         "",
-                        "Note: Pokemon can revert/change form from held item change.")
-                .setSelectedItemName("Selected Form")
+                        config.FormInfoNote1())
+                .setSelectedItemName(config.FormSelectedTitle())
                 .setSelectedSlot(46)
                 .setInfoSlot(48)
                 .setResetSlot(50)
@@ -46,7 +52,7 @@ public class FormShop extends BaseShop {
         List<IEnumForm> forms = pokemon.getSpecies().getPossibleForms(true);
         for (IEnumForm form : forms) {
             pokemon.setForm(form);
-            InvItem item = new InvItem(REG.getPixelmonUtils().getPokeSprite(pokemon), (pokemon.isShiny() ? "§3Shiny " : "§3") + pokemon.getSpecies().getPokemonName() + " §8(§e" + form.getLocalizedName() + "§8)");
+            InvItem item = new InvItem(REG.getPixelmonUtils().getPokeSprite(pokemon), (pokemon.isShiny() ? "§3"+config.FormShiny() : "§3") + pokemon.getSpecies().getPokemonName() + " §8(§e" + form.getLocalizedName() + "§8)");
             page.setItem(i, item, event -> {
                 if (shops.pokemon.getFormEnum() != form) shops.getSelectedOptions().put(getOption(), form);
                 else shops.getSelectedOptions().remove(getOption());
@@ -64,7 +70,8 @@ public class FormShop extends BaseShop {
 
     @Override
     protected void priceSummaries() {
-        addPriceSummary("Form Change", getPriceOf(ConfigKeyConstants.CHANGE, 4000));
+        FormConfig config = FusionPixelmon.getInstance().getConfiguration().getFormConfig();
+        addPriceSummary(config.FormPriceSummery(), getPriceOf(ConfigKeyConstants.CHANGE, 4000));
     }
 
     @Override
@@ -73,6 +80,6 @@ public class FormShop extends BaseShop {
     }
 
     private static class ConfigKeyConstants {
-        private static final String CHANGE = "change";
+        private static final String CHANGE = "修改";
     }
 }

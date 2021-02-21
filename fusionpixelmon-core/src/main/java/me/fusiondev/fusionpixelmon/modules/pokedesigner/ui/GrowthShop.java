@@ -10,6 +10,9 @@ import me.fusiondev.fusionpixelmon.api.items.AbstractItemStack;
 import me.fusiondev.fusionpixelmon.api.ui.BaseShop;
 import me.fusiondev.fusionpixelmon.api.ui.Shops;
 import me.fusiondev.fusionpixelmon.impl.GrammarUtils;
+import me.fusiondev.fusionpixelmon.voc.GenderConfig;
+import me.fusiondev.fusionpixelmon.voc.GrowthConfig;
+import me.fusiondev.fusionpixelmon.voc.TranslateConfig;
 
 public class GrowthShop extends BaseShop {
     public GrowthShop(Shops shops) {
@@ -21,14 +24,16 @@ public class GrowthShop extends BaseShop {
         return Shops.Options.GROWTH;
     }
 
+    GrowthConfig config = FusionPixelmon.getInstance().getConfiguration().getGrowthConfig();
+    TranslateConfig Tconfig = FusionPixelmon.getInstance().getConfiguration().getTranslationConfig();
+
     @Override
     public InvPage buildPage() {
-        Builder builder = new Builder("§0Growth Modification", "pokeeditor-growth", 5)
-                .setInfoItemData("Growth Info",
-                        "To pick a size for your Pokemon",
-                        "simply select one of the options",
-                        "on the right.")
-                .setSelectedItemName("Selected Growth")
+        Builder builder = new Builder("§0"+config.GrowthTitle(), "pokeeditor-growth", 5)
+                .setInfoItemData(config.GrowthInfoTitle(),
+                        config.GrowthInfoString1(),
+                        config.GrowthInfoString2())
+                .setSelectedItemName(config.GrowthSelectedTitle())
                 .setSelectedOption(getOption());
         InvPage page = builder.build();
         Registry reg = FusionPixelmon.getRegistry();
@@ -38,16 +43,30 @@ public class GrowthShop extends BaseShop {
             itemStack.setColour(option.getDyeColor());
             //ItemStack itemStack = ItemStack.builder().itemType(ItemTypes.STAINED_HARDENED_CLAY).build();
             //itemStack.offer(Keys.DYE_COLOR, option.dyeColor);
-            InvItem item = new InvItem(itemStack, "§3§l" + GrammarUtils.cap(option.name()));
+            String optS = option.name();
+            String optX = option.name();
+            if (Tconfig.Translation() == true){
+            if(optS.equals("Microscopic")){optS =config.GrowthMicroscopic();}
+            if(optS.equals("Pygmy")){optS =config.GrowthPygmy();}
+            if(optS.equals("Runt")){optS =config.GrowthRunt();}
+            if(optS.equals("Small")){optS =config.GrowthSmall();}
+            if(optS.equals("Ordinary")){optS =config.GrowthOrdinary();}
+            if(optS.equals("Huge")){optS =config.GrowthHuge();}
+            if(optS.equals("Giant")){optS =config.GrowthGiant();}
+            if(optS.equals("Enormous")){optS =config.GrowthEnormous();}
+            if(optS.equals("Ginormous")){optS =config.GrowthGinormous();}}
+            InvItem item = new InvItem(itemStack, "§3§l" + optS);
+            String finalOptS = optS;
             page.setItem(option.getSlot(), item, event -> {
-                if (!shops.pokemon.getGrowth().name().equalsIgnoreCase(option.name()))
-                    shops.getSelectedOptions().put(getOption(), option.name());
+                if (!shops.pokemon.getGrowth().name().equalsIgnoreCase(optX))
+                    shops.getSelectedOptions().put(getOption(), optX);
                 else shops.getSelectedOptions().remove(getOption());
                 builder.setSelectedItem(item.getItemStack());
             });
         }
         return page;
     }
+
 
     @Override
     public int prices(Object value) {
@@ -60,9 +79,10 @@ public class GrowthShop extends BaseShop {
 
     @Override
     protected void priceSummaries() {
-        addPriceSummary("Most Growths", getPriceOf(ConfigKeyConstants.REGULAR, 600));
-        addPriceSummary(EnumGrowth.Microscopic.name(), getPriceOf(ConfigKeyConstants.SPECIAL, 2000));
-        addPriceSummary(EnumGrowth.Ginormous.name(), getPriceOf(ConfigKeyConstants.SPECIAL, 2000));
+        GrowthConfig config = FusionPixelmon.getInstance().getConfiguration().getGrowthConfig();
+        addPriceSummary(config.GrowthGrowth1(), getPriceOf(ConfigKeyConstants.REGULAR, 600));
+        addPriceSummary(config.GrowthGrowth2(), getPriceOf(ConfigKeyConstants.SPECIAL, 2000));
+        addPriceSummary(config.GrowthGrowth3(), getPriceOf(ConfigKeyConstants.SPECIAL, 2000));
     }
 
     @Override
@@ -71,8 +91,8 @@ public class GrowthShop extends BaseShop {
     }
 
     private static class ConfigKeyConstants {
-        private static final String REGULAR = "regular";
-        private static final String SPECIAL = "special";
+        private static final String REGULAR = "一般";
+        private static final String SPECIAL = "特殊";
     }
 
     public enum GrowthOptions {

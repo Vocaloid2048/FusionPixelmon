@@ -10,6 +10,8 @@ import me.fusiondev.fusionpixelmon.api.items.AbstractItemTypes;
 import me.fusiondev.fusionpixelmon.api.ui.BaseShop;
 import me.fusiondev.fusionpixelmon.api.ui.Shops;
 import me.fusiondev.fusionpixelmon.impl.TimeUtils;
+import me.fusiondev.fusionpixelmon.voc.LevelConfig;
+import me.fusiondev.fusionpixelmon.voc.TranslateConfig;
 
 public class LevelShop extends BaseShop {
     public LevelShop(Shops shops) {
@@ -21,13 +23,17 @@ public class LevelShop extends BaseShop {
         return Shops.Options.LEVEL;
     }
 
+
+    LevelConfig config = FusionPixelmon.getInstance().getConfiguration().getLevelConfig();
+    TranslateConfig Tconfig = FusionPixelmon.getInstance().getConfiguration().getTranslationConfig();
+
     @Override
     public InvPage buildPage() {
-        Builder builder = new Builder("§0Level Modification", "pokeeditor-level", 6)
-                .setInfoItemData("Level Info",
-                        "To modify the levels for your Pokemon",
-                        "simply use the above options.")
-                .setSelectedItemName("Selected Levels")
+        Builder builder = new Builder("§0"+config.LevelTitle(), "pokeeditor-level", 6)
+                .setInfoItemData(config.LevelInfoTitle(),
+                        config.LevelInfoString1(),
+                        config.LevelInfoString2())
+                .setSelectedItemName(config.LevelSelectedTitle())
                 .setSelectedSlot(46)
                 .setInfoSlot(48)
                 .setResetSlot(50)
@@ -46,20 +52,18 @@ public class LevelShop extends BaseShop {
         AbstractItemStack addStack = reg.STAINED_HARDENED_CLAY().to();
         addStack.setColour(DyeColor.LIME);
         //addStack.offer(Keys.DYE_COLOR, DyeColors.LIME);
-        InvItem item1 = new InvItem(addStack, "§a§lAdd Levels");
+        InvItem item1 = new InvItem(addStack, "§a§l"+config.LevelIncreaseLvl());
         if (FusionPixelmon.getModule().equals("forge")) {
             item1.setLore(
-                    "Click here to increase the",
-                    "level of your pokemon."
+                    config.LevelPressIncrease()
             );
         } else {
             item1.setLore(
-                    "Click here to increase the",
-                    "level of your pokemon.",
+                    config.LevelPressIncrease(),
                     "",
-                    "§aNote:",
-                    "  Left Click: §a+1 lvl",
-                    "  Left Click + Shift: §a+10 lvls"
+                    "§a"+config.LevelNotes(),
+                    "  "+config.LevelLeftClick()+" §a+1 "+config.LevelZName(),
+                    "  "+config.LevelLeftClick()+" §a+10 "+config.LevelZName()
             );
         }
         int[] item1slots = new int[]{
@@ -94,20 +98,18 @@ public class LevelShop extends BaseShop {
         AbstractItemStack removeStack = reg.STAINED_HARDENED_CLAY().to();
         removeStack.setColour(DyeColor.RED);
         //removeStack.offer(Keys.DYE_COLOR, DyeColors.RED);
-        InvItem item2 = new InvItem(removeStack, "§c§lRemove Levels");
+        InvItem item2 = new InvItem(removeStack, "§c§l"+config.LevelDecreaseLvl());
         if (FusionPixelmon.getModule().equals("forge")) {
             item2.setLore(
-                    "Click here to decrease the",
-                    "level of your pokemon."
+                    config.LevelPressDecrease()
             );
         } else {
             item2.setLore(
-                    "Click here to decrease the",
-                    "level of your pokemon.",
+                    config.LevelPressDecrease(),
                     "",
-                    "§aNote:",
-                    "  Left Click: §c-1 lvl",
-                    "  Left Click + Shift: §c-10 lvls"
+                    "§c"+config.LevelNotes(),
+                    "  "+config.LevelLeftClick()+" §c-1 "+config.LevelZName(),
+                    "  "+config.LevelLeftClickShift()+" §c-10 "+config.LevelZName()
             );
         }
         for (int slots2 : item2slots) {
@@ -138,8 +140,9 @@ public class LevelShop extends BaseShop {
 
     @Override
     protected void priceSummaries() {
-        addPriceSummary("Add Level", getPriceOf(ConfigKeyConstants.ADD_LEVEL, 100) + " per level");
-        addPriceSummary("Remove Level", getPriceOf(ConfigKeyConstants.REMOVE_LEVEL, 10) + " per level");
+        LevelConfig config = FusionPixelmon.getInstance().getConfiguration().getLevelConfig();
+        addPriceSummary(config.LevelIncreaseLvl(), getPriceOf(ConfigKeyConstants.ADD_LEVEL, 100) + " "+config.LevelEach());
+        addPriceSummary(config.LevelDecreaseLvl(), getPriceOf(ConfigKeyConstants.REMOVE_LEVEL, 10) +  " "+config.LevelEach());
     }
 
     @Override

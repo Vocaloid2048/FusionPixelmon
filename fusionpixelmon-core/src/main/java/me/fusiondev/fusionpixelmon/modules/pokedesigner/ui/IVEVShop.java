@@ -3,6 +3,7 @@ package me.fusiondev.fusionpixelmon.modules.pokedesigner.ui;
 import com.pixelmonmod.pixelmon.entities.pixelmon.stats.EVStore;
 import com.pixelmonmod.pixelmon.entities.pixelmon.stats.IVStore;
 import com.pixelmonmod.pixelmon.entities.pixelmon.stats.StatsType;
+import me.fusiondev.fusionpixelmon.FusionPixelmon;
 import me.fusiondev.fusionpixelmon.api.colour.DyeColor;
 import me.fusiondev.fusionpixelmon.api.inventory.InvItem;
 import me.fusiondev.fusionpixelmon.api.inventory.InvPage;
@@ -12,6 +13,8 @@ import me.fusiondev.fusionpixelmon.api.ui.Shops;
 import me.fusiondev.fusionpixelmon.impl.GrammarUtils;
 import me.fusiondev.fusionpixelmon.impl.MathUtils;
 import me.fusiondev.fusionpixelmon.impl.pixelmon.PokemonWrapper;
+import me.fusiondev.fusionpixelmon.voc.IVEVConfig;
+import me.fusiondev.fusionpixelmon.voc.TranslateConfig;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,6 +41,10 @@ public class IVEVShop extends BaseShop {
     private static final InvItem SUBTRACTION_ITEM = new InvItem(REG.getItemTypesRegistry().STAINED_HARDENED_CLAY().to().setColour(DyeColor.RED), "");
     private static final InvItem ADDITION_ITEM = new InvItem(REG.getItemTypesRegistry().STAINED_HARDENED_CLAY().to().setColour(DyeColor.GREEN), "");
 
+
+    IVEVConfig config = FusionPixelmon.getInstance().getConfiguration().getIVEVConfig();
+    TranslateConfig Tconfig = FusionPixelmon.getInstance().getConfiguration().getTranslationConfig();
+
     private static final int ROWS = 6;
 
     @Override
@@ -45,10 +52,10 @@ public class IVEVShop extends BaseShop {
         final IVEVAction[] ACTION = new IVEVAction[1];
         ACTION[0] = new IVEVAction();
 
-        Builder builder = new Builder("§0IV/EV Modification", "pokeeditor-ivef", ROWS)
-                .setInfoItemData("IV/EV Info",
-                        "To modify the IVs/EVs for your Pokemon",
-                        "simply use the options.")
+        Builder builder = new Builder("§0"+config.IVEVTitle(), "pokeeditor-ivef", ROWS)
+                .setInfoItemData(config.IVEVInfoTitle(),
+                        config.IVEVInfoString1(),
+                        config.IVEVInfoString2())
                 .setSelectedSlot(-2)
                 .onReset(() -> {
                     ACTION[0].IV.clear();
@@ -66,8 +73,8 @@ public class IVEVShop extends BaseShop {
         int totalIV = IntStream.of(IV_CACHE).sum();
         int totalEV = IntStream.of(EV_CACHE).sum();
 
-        String[] sub = new String[]{"", "§aNote:", "  Left Click: §c-1", "  Left Click + Shift: §c-10"};
-        String[] add = new String[]{"", "§aNote:", "  Left Click: §a+1", "  Left Click + Shift: §a+10"};
+        String[] sub = new String[]{"", config.IVEVNotes(), "  "+config.IVEVLeftClick()+" §c-1", "  "+config.IVEVLeftClickShift()+" §c-10"};
+        String[] add = new String[]{"", config.IVEVNotes(), "  "+config.IVEVLeftClick()+" §a+1", "  "+config.IVEVLeftClickShift()+" §a+10"};
 
 
         InvItem[][] items = new InvItem[IVEVOption.values().length][5];
@@ -76,14 +83,23 @@ public class IVEVShop extends BaseShop {
         int i1 = 0;
         for (IVEVOption type : IVEVOption.values()) {
             optName = GrammarUtils.underscoreToSpace(type.name());
+            String optS = "";
+            if (Tconfig.Translation() == true){
+            if (optName.equals("HP")){optS = config.IVEVHP();}
+            if (optName.equals("Attack")){optS = config.IVEVATK();}
+            if (optName.equals("Defence")){optS = config.IVEVDEF();}
+            if (optName.equals("Special Attack")){optS = config.IVEVSATK();}
+            if (optName.equals("Special Defence")){optS = config.IVEVSDEF();}
+            if (optName.equals("Speed")){optS = config.IVEVSPD();}
+            }
 
-            items[i1][0] = new InvItem(REG.getPixelmonUtils().getPixelmonItemStack(type.getItemID()), "§3§l" + optName);
+            items[i1][0] = new InvItem(REG.getPixelmonUtils().getPixelmonItemStack(type.getItemID()), "§3§l" + optS);
             page.setItem(i1 * 9, items[i1][0]);
 
-            items[i1][1] = SUBTRACTION_ITEM.copy("§c§lRemove " + optName + " EVs");
-            items[i1][2] = ADDITION_ITEM.copy("§a§lAdd " + optName + " EVs");
-            items[i1][3] = SUBTRACTION_ITEM.copy("§c§lRemove " + optName + " IVs");
-            items[i1][4] = ADDITION_ITEM.copy("§a§lAdd " + optName + " IVs");
+            items[i1][1] = SUBTRACTION_ITEM.copy("§c§l"+config.IVEVDecrease()+ optS +" " + "EVs");
+            items[i1][2] = ADDITION_ITEM.copy("§a§l"+config.IVEVIncrease()+ optS + " " +"EVs");
+            items[i1][3] = SUBTRACTION_ITEM.copy("§c§l"+config.IVEVDecrease()+ optS +" " + "IVs");
+            items[i1][4] = ADDITION_ITEM.copy("§a§l"+config.IVEVIncrease()+ optS +" " + "IVs");
             i1++;
         }
 
@@ -161,9 +177,9 @@ public class IVEVShop extends BaseShop {
     }
 
     private static String[] lore(String current, String currentTotal, String requested, String requestedTotal) {
-        return new String[]{"Current: " + current, "Current Total: " + currentTotal, "", "Requested: " + requested, "Requested Total: " + requestedTotal};
+        IVEVConfig config = FusionPixelmon.getInstance().getConfiguration().getIVEVConfig();
+        return new String[]{config.IVEVCurrent()+" " + current, config.IVEVCurrentTotal()+" " + currentTotal, "", config.IVEVRequested()+" " + requested, config.IVEVRequestedTotal()+" " + requestedTotal};
     }
-
     @Override
     public int prices(Object value) {
         IVEVAction action = ((IVEVAction) value);
@@ -181,11 +197,12 @@ public class IVEVShop extends BaseShop {
 
     @Override
     protected void priceSummaries() {
-        addPriceSummary("Add IV", getPriceOf(ConfigKeyConstants.ADD_IV, 600) + " per IV");
-        addPriceSummary("Remove IV", getPriceOf(ConfigKeyConstants.REMOVE_IV, 5) + " per IV");
-        String changeEV = getPriceOf(ConfigKeyConstants.CHANGE_EV, 5) + " per EV";
-        addPriceSummary("Add EV", changeEV);
-        addPriceSummary("Remove EV", changeEV);
+        IVEVConfig config = FusionPixelmon.getInstance().getConfiguration().getIVEVConfig();
+        addPriceSummary(config.IVEVIncrease(), getPriceOf(ConfigKeyConstants.ADD_IV, 600) + " "+config.IVEVEach()+" IV");
+        addPriceSummary(config.IVEVDecrease(), getPriceOf(ConfigKeyConstants.REMOVE_IV, 5) + " "+config.IVEVEach()+" IV");
+        String changeEV = getPriceOf(ConfigKeyConstants.CHANGE_EV, 5) + " "+config.IVEVEach()+" IV";
+        addPriceSummary(config.IVEVIncrease(), changeEV);
+        addPriceSummary(config.IVEVDecrease(), changeEV);
     }
 
     @Override

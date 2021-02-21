@@ -24,7 +24,6 @@ public class PokeDesignerConfig {
     private String guiTitle;
     @Setting("shop-currency")
     private String currency;
-
     private static final String DEFAULT_CURRENCY = "pokedollar";
 
     /**
@@ -135,4 +134,5 @@ public class PokeDesignerConfig {
         }
         loader.save(configRoot);
     }
+
 }

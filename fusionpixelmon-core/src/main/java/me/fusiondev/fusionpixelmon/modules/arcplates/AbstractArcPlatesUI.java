@@ -16,6 +16,10 @@ import me.fusiondev.fusionpixelmon.api.pixelmon.ArcPlates;
 import me.fusiondev.fusionpixelmon.api.ui.events.Event;
 import me.fusiondev.fusionpixelmon.data.ArcPlateData;
 import me.fusiondev.fusionpixelmon.impl.GrammarUtils;
+import me.fusiondev.fusionpixelmon.modules.arcplates.config.ArcPlatesConfig;
+import me.fusiondev.fusionpixelmon.voc.AbilityConfig;
+import me.fusiondev.fusionpixelmon.voc.ArcPlateConfig;
+import me.fusiondev.fusionpixelmon.voc.TranslateConfig;
 
 import java.io.File;
 import java.util.HashMap;
@@ -64,14 +68,17 @@ public abstract class AbstractArcPlatesUI {
      * @param player  the player.
      * @param pokemon the Arceus pokemon.
      */
+
+    ArcPlateConfig config = FusionPixelmon.getInstance().getConfiguration().getArcPlateConfig();
+    TranslateConfig Tconfig = FusionPixelmon.getInstance().getConfiguration().getTranslationConfig();
     public void launch(AbstractPlayer player, Pokemon pokemon) {
         if (pokemon.getSpecies() != EnumSpecies.Arceus) {
-            throw new IllegalArgumentException("Only an Arceus can be passed!");
+            throw new IllegalArgumentException(config.ArcPlatesNotArc());
         }
         this.player = player;
         this.pokemon = pokemon;
         this.data = new ArcPlateData(arcplatesDataFile, pokemon.getUUID());
-        this.page = new InvPage("§8Arc Plates", "arcplates", ROWS);
+        this.page = new InvPage("§8"+config.ArcPlatesPlates(), "arcplates", ROWS);
 
         create();
     }
@@ -102,7 +109,27 @@ public abstract class AbstractArcPlatesUI {
                     if (plate.colour != null) stack.setColour(plate.colour);
                 } else {
                     stack = FusionPixelmon.getRegistry().getPixelmonUtils().getPixelmonItemStack(plate.plate.name().toLowerCase() + "_plate");
-                    name = "§a" + GrammarUtils.cap(plate.name()) + " Plate";
+                    String plateS = GrammarUtils.cap(plate.name());
+                    if (Tconfig.Translation() == true){
+                    if(GrammarUtils.cap(plate.name()).equals("Meadow")){plateS = "碧綠石板";}
+                    if(GrammarUtils.cap(plate.name()).equals("Flame")){plateS = "火球石板";}
+                    if(GrammarUtils.cap(plate.name()).equals("Splash")){plateS = "水滴石板";}
+                    if(GrammarUtils.cap(plate.name()).equals("Sky")){plateS = "藍天石板";}
+                    if(GrammarUtils.cap(plate.name()).equals("Insect")){plateS = "玉蟲石板";}
+                    if(GrammarUtils.cap(plate.name()).equals("Toxic")){plateS = "劇毒石板";}
+                    if(GrammarUtils.cap(plate.name()).equals("Zap")){plateS = "雷電石板";}
+                    if(GrammarUtils.cap(plate.name()).equals("Mind")){plateS = "神奇石板";}
+                    if(GrammarUtils.cap(plate.name()).equals("Stone")){plateS = "岩石石板";}
+                    if(GrammarUtils.cap(plate.name()).equals("Earth")){plateS = "大地石板";}
+                    if(GrammarUtils.cap(plate.name()).equals("Dread")){plateS = "惡顏石板";}
+                    if(GrammarUtils.cap(plate.name()).equals("Spooky")){plateS = "妖怪石板";}
+                    if(GrammarUtils.cap(plate.name()).equals("Iron")){plateS = "鋼鐵石板";}
+                    if(GrammarUtils.cap(plate.name()).equals("Fist")){plateS = "拳頭石板";}
+                    if(GrammarUtils.cap(plate.name()).equals("Icicle")){plateS = "冰柱石板";}
+                    if(GrammarUtils.cap(plate.name()).equals("Draco")){plateS = "龍之石板";}
+                    if(GrammarUtils.cap(plate.name()).equals("Pixie")){plateS = "妖精石板";}}
+
+                    name = "§a" +plateS;
                 }
                 page.setDynamicItem(plate.slot, new InvItem(stack, name));
             }
@@ -112,7 +139,7 @@ public abstract class AbstractArcPlatesUI {
                 EntityPixelmon entityPixelmon = pokemon.getPixelmonIfExists();
 
                 hoveringStack.setColour(isActive(entityPixelmon) ? DyeColor.LIME : DyeColor.RED);
-                InvItem hoveringItem = new InvItem(hoveringStack, "§b§lArcPlates Hovering").setLore("Hover the plates around your Arceus");
+                InvItem hoveringItem = new InvItem(hoveringStack, "§b§l"+config.ArcPlatesPlateMove()).setLore(config.ArcPlatesPlateMoveInfo());
                 page.setDynamicItem(27, hoveringItem, event -> {
                     if (entityPixelmon != null && entityPixelmon.isAddedToWorld()) {
                         deactivateForPlayer(entityPixelmon);
@@ -122,19 +149,18 @@ public abstract class AbstractArcPlatesUI {
                             deleteRing(entityPixelmon);
                             deactivate(entityPixelmon);
                         }
-                    } else player.sendMessage(Color.RED + "Your Arceus must be sent out before enabling hovering");
+                    } else player.sendMessage(Color.RED + config.ArcPlatesPlateCallArc());
                 });
             }
         });
 
-        InvItem infoItem = new InvItem(reg.getItemTypesRegistry().PAPER(), "§b§lStorage Info").setLore(
+        InvItem infoItem = new InvItem(reg.getItemTypesRegistry().PAPER(), "§b§l"+config.ArcPlatesPlateSave()).setLore(
                 "",
-                "In Storage:",
-                "  Left Click: §aEquip Plate",
-                "  Right Click: §aRemove Plate from Storage",
-                "",
-                "In Inventory:",
-                "  Left Click: §aAdd Plate to Storage"
+                config.ArcPlatesPlateInfo1(),
+                config.ArcPlatesPlateInfo1L(),
+                config.ArcPlatesPlateInfo1R(),
+                config.ArcPlatesPlateInfo2(),
+                config.ArcPlatesPlateInfo2L()
         );
         int infoItemSlot = FusionPixelmon.getInstance().getConfiguration().getArcPlates().getHovering().isEnabled() ? 9 : 18;
         page.setItem(infoItemSlot, infoItem);

@@ -96,3 +96,6 @@ To return the `fusionpixelmon.conf` config file back to the original, you can ei
 
 ## Known Issues
 - Using inventory mods (like InventoryTweaks) on an open GUI menu can break the menu or cause item duplications.
+
+
+### This is unoffical zh-TW translate, not for public until get the permission from this plugin's main author. Thx  

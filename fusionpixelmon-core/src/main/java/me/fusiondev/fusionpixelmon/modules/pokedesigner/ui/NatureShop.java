@@ -10,6 +10,8 @@ import me.fusiondev.fusionpixelmon.api.items.AbstractItemTypes;
 import me.fusiondev.fusionpixelmon.api.ui.BaseShop;
 import me.fusiondev.fusionpixelmon.api.ui.Shops;
 import me.fusiondev.fusionpixelmon.impl.GrammarUtils;
+import me.fusiondev.fusionpixelmon.voc.NatureConfig;
+import me.fusiondev.fusionpixelmon.voc.TranslateConfig;
 
 public class NatureShop extends BaseShop {
     public NatureShop(Shops shops) {
@@ -21,14 +23,16 @@ public class NatureShop extends BaseShop {
         return Shops.Options.NATURE;
     }
 
+
+    NatureConfig config = FusionPixelmon.getInstance().getConfiguration().getNatureConfig();
+    TranslateConfig Tconfig = FusionPixelmon.getInstance().getConfiguration().getTranslationConfig();
     @Override
     public InvPage buildPage() {
-        Builder builder = new Builder("§0Nature Modification", "pokeeditor-nature", 5)
-                .setInfoItemData("Nature Info",
-                        "To pick a nature for your Pokemon",
-                        "simply select one of the options",
-                        "on the right.")
-                .setSelectedItemName("Selected Nature")
+        Builder builder = new Builder("§0"+config.NatureTitle(), "pokeeditor-nature", 5)
+                .setInfoItemData(config.NatureInfoTitle(),
+                        config.NatureInfoString1(),
+                        config.NatureInfoString2())
+                .setSelectedItemName(config.NatureSelectedTitle())
                 .setSelectedOption(getOption());
         InvPage page = builder.build();
         AbstractItemTypes reg = FusionPixelmon.getRegistry().getItemTypesRegistry();
@@ -37,11 +41,42 @@ public class NatureShop extends BaseShop {
             AbstractItemStack itemStack = reg.STAINED_HARDENED_CLAY().to();
             itemStack.setColour(option.dyeColor);
             //itemStack.offer(Keys.DYE_COLOR, option.dyeColor);
-            InvItem item = new InvItem(itemStack, "§3§l" + GrammarUtils.cap(option.name()));
-            item.setLore("  Boosted: §b" + option.boosted, "  Lowered: §c" + option.lowered);
+
+            String optS = GrammarUtils.cap(option.name());
+            String optX = GrammarUtils.cap(option.name());
+            if (Tconfig.Translation() == true){
+            if (optS.equals("Adamant")){optS ="固執";}
+            if (optS.equals("Bashful")){optS ="害羞";}
+            if (optS.equals("Bold")){optS ="大膽";}
+            if (optS.equals("Brave")){optS ="勇敢";}
+            if (optS.equals("Calm")){optS ="溫和";}
+            if (optS.equals("Careful")){optS ="慎重";}
+            if (optS.equals("Docile")){optS ="坦率";}
+            if (optS.equals("Gentle")){optS ="溫順";}
+            if (optS.equals("Hardy")){optS ="勤奮";}
+            if (optS.equals("Hasty")){optS ="急躁";}
+            if (optS.equals("Impish")){optS ="淘氣";}
+            if (optS.equals("Jolly")){optS ="爽朗";}
+            if (optS.equals("Lax")){optS ="樂天";}
+            if (optS.equals("Lonely")){optS ="怕寂寞";}
+            if (optS.equals("Mild")){optS ="慢吞吞";}
+            if (optS.equals("Modest")){optS ="內斂";}
+            if (optS.equals("Naive")){optS ="天真";}
+            if (optS.equals("Naughty")){optS ="頑皮";}
+            if (optS.equals("Quiet")){optS ="冷靜";}
+            if (optS.equals("Quirky")){optS ="浮躁";}
+            if (optS.equals("Rash")){optS ="馬虎";}
+            if (optS.equals("Relaxed")){optS ="悠閒";}
+            if (optS.equals("Sassy")){optS ="自大";}
+            if (optS.equals("Serious")){optS ="認真";}
+            if (optS.equals("Timid")){optS ="膽小";}}
+
+            InvItem item = new InvItem(itemStack, "§3§l" + optS);
+            item.setLore("  "+config.NatureIncreased()+" §b" + option.boosted, "  "+config.NatureDecreased()+" §c" + option.lowered);
+            String finalOptS = optS;
             page.setItem(option.slot, item, event -> {
-                if (!shops.pokemon.getNature().name().equalsIgnoreCase(option.name()))
-                    shops.getSelectedOptions().put(getOption(), GrammarUtils.cap(option.name()));
+                if (!shops.pokemon.getNature().name().equalsIgnoreCase(optX))
+                    shops.getSelectedOptions().put(getOption(), optX);
                 else shops.getSelectedOptions().remove(getOption());
                 builder.setSelectedItem(item.getItemStack());
             });
@@ -57,7 +92,8 @@ public class NatureShop extends BaseShop {
 
     @Override
     protected void priceSummaries() {
-        addPriceSummary("Nature Change", getPriceOf(ConfigKeyConstants.CHANGE, 3000));
+        NatureConfig config = FusionPixelmon.getInstance().getConfiguration().getNatureConfig();
+        addPriceSummary(config.NaturePriceSummary(), getPriceOf(ConfigKeyConstants.CHANGE, 3000));
     }
 
     @Override
@@ -66,44 +102,69 @@ public class NatureShop extends BaseShop {
     }
 
     private static class ConfigKeyConstants {
-        private static final String CHANGE = "change";
+        private static final String CHANGE = "修改";
     }
 
     public enum NatureOptions {
-        HARDY(2, "Attack", "Attack", DyeColor.RED),
-        LONELY(11, "Attack", "Defense", DyeColor.RED),
-        ADAMANT(20, "Attack", "Special Attack", DyeColor.RED),
-        NAUGHTY(29, "Attack", "Special Defense", DyeColor.RED),
-        BRAVE(38, "Attack", "Speed", DyeColor.RED),
+        HARDY(2, ATK(), ATK(), DyeColor.RED),
+        LONELY(11, ATK(), DEF(), DyeColor.RED),
+        ADAMANT(20, ATK(), SA(), DyeColor.RED),
+        NAUGHTY(29, ATK(), SD(), DyeColor.RED),
+        BRAVE(38, ATK(), SPD(), DyeColor.RED),
 
-        BOLD(3, "Defense", "Attack", DyeColor.ORANGE),
-        DOCILE(12, "Defense", "Defense", DyeColor.ORANGE),
-        IMPISH(21, "Defense", "Special Attack", DyeColor.ORANGE),
-        LAX(30, "Defense", "Special Defense", DyeColor.ORANGE),
-        RELAXED(39, "Defense", "Speed", DyeColor.ORANGE),
+        BOLD(3, DEF(), ATK(), DyeColor.ORANGE),
+        DOCILE(12, DEF(), DEF(), DyeColor.ORANGE),
+        IMPISH(21, DEF(), SA(), DyeColor.ORANGE),
+        LAX(30, DEF(), SD(), DyeColor.ORANGE),
+        RELAXED(39, DEF(), SPD(), DyeColor.ORANGE),
 
-        MODEST(4, "Special Attack", "Attack", DyeColor.PURPLE),
-        MILD(13, "Special Attack", "Defense", DyeColor.PURPLE),
-        BASHFUL(22, "Special Attack", "Special Attack", DyeColor.PURPLE),
-        RASH(31, "Special Attack", "Special Defense", DyeColor.PURPLE),
-        QUIET(40, "Special Attack", "Speed", DyeColor.PURPLE),
+        MODEST(4, SA(), ATK(), DyeColor.PURPLE),
+        MILD(13, SA(), DEF(), DyeColor.PURPLE),
+        BASHFUL(22, SA(), SA(), DyeColor.PURPLE),
+        RASH(31, SA(), SD(), DyeColor.PURPLE),
+        QUIET(40, SA(), SPD(), DyeColor.PURPLE),
 
-        CALM(5, "Special Defense", "Attack", DyeColor.YELLOW),
-        GENTLE(14, "Special Defense", "Defense", DyeColor.YELLOW),
-        CAREFUL(23, "Special Defense", "Special Attack", DyeColor.YELLOW),
-        QUIRKY(32, "Special Defense", "Special Defense", DyeColor.YELLOW),
-        SASSY(41, "Special Defense", "Speed", DyeColor.YELLOW),
+        CALM(5, SD(), ATK(), DyeColor.YELLOW),
+        GENTLE(14, SD(), DEF(), DyeColor.YELLOW),
+        CAREFUL(23, SD(), SA(), DyeColor.YELLOW),
+        QUIRKY(32, SD(), SD(), DyeColor.YELLOW),
+        SASSY(41, SD(), SPD(), DyeColor.YELLOW),
 
-        TIMID(6, "Speed", "Attack", DyeColor.LIGHT_BLUE),
-        HASTY(15, "Speed", "Defense", DyeColor.LIGHT_BLUE),
-        JOLLY(24, "Speed", "Special Attack", DyeColor.LIGHT_BLUE),
-        NAIVE(33, "Speed", "Special Defense", DyeColor.LIGHT_BLUE),
-        SERIOUS(42, "Speed", "Speed", DyeColor.LIGHT_BLUE);
+        TIMID(6, SPD(), ATK(), DyeColor.LIGHT_BLUE),
+        HASTY(15, SPD(), DEF(), DyeColor.LIGHT_BLUE),
+        JOLLY(24, SPD(), SA(), DyeColor.LIGHT_BLUE),
+        NAIVE(33, SPD(), SD(), DyeColor.LIGHT_BLUE),
+        SERIOUS(42, SPD(), SPD(), DyeColor.LIGHT_BLUE);
 
         int slot;
         String boosted;
         String lowered;
         DyeColor dyeColor;
+
+        public static String ATK(){
+            NatureConfig config = FusionPixelmon.getInstance().getConfiguration().getNatureConfig();
+            return config.NatureATK();
+        }
+        public static String DEF(){
+            NatureConfig config = FusionPixelmon.getInstance().getConfiguration().getNatureConfig();
+            return config.NatureDEF();
+        }
+        public static String HP(){
+            NatureConfig config = FusionPixelmon.getInstance().getConfiguration().getNatureConfig();
+            return config.NatureHP();
+        }
+        public static String SPD(){
+            NatureConfig config = FusionPixelmon.getInstance().getConfiguration().getNatureConfig();
+            return config.NatureSPD();
+        }
+        public static String SA(){
+            NatureConfig config = FusionPixelmon.getInstance().getConfiguration().getNatureConfig();
+            return config.NatureSATK();
+        }
+        public static String SD(){
+            NatureConfig config = FusionPixelmon.getInstance().getConfiguration().getNatureConfig();
+            return config.NatureSDEF();
+        }
 
         NatureOptions(int slot, String boosted, String lowered, DyeColor dyeColor) {
             this.slot = slot;

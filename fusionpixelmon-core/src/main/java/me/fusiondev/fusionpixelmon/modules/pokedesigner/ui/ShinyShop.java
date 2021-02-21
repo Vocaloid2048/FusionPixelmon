@@ -1,9 +1,12 @@
 package me.fusiondev.fusionpixelmon.modules.pokedesigner.ui;
 
+import me.fusiondev.fusionpixelmon.FusionPixelmon;
 import me.fusiondev.fusionpixelmon.api.inventory.InvItem;
 import me.fusiondev.fusionpixelmon.api.inventory.InvPage;
 import me.fusiondev.fusionpixelmon.api.ui.BaseShop;
 import me.fusiondev.fusionpixelmon.api.ui.Shops;
+import me.fusiondev.fusionpixelmon.voc.ShinyConfig;
+import me.fusiondev.fusionpixelmon.voc.TranslateConfig;
 
 public class ShinyShop extends BaseShop {
     public ShinyShop(Shops shops) {
@@ -15,27 +18,30 @@ public class ShinyShop extends BaseShop {
         return Shops.Options.SHINY;
     }
 
+    ShinyConfig config = FusionPixelmon.getInstance().getConfiguration().getShinyConfig();
+    TranslateConfig Tconfig = FusionPixelmon.getInstance().getConfiguration().getTranslationConfig();
+
     @Override
     public InvPage buildPage() {
-        Builder builder = new Builder("§0Shininess Modification", "pokeeditor-shiny", 5)
-                .setInfoItemData("Shiny Info",
-                        "To select the shininess of",
-                        "your Pokemon simply select one",
-                        "of the options on the right.")
-                .setSelectedItemName("Selected Shininess")
+        Builder builder = new Builder("§0"+config.ShinyTitle(), "pokeeditor-shiny", 5)
+                .setInfoItemData(config.ShinyInfoTitle(),
+                        config.ShinyInfoString1(),
+                        config.ShinyInfoString2())
+                .setSelectedItemName(config.ShinySelectedTitle())
                 .setSelectedOption(getOption());
         InvPage page = builder.build();
 
-        InvItem item1 = new InvItem(REG.getPixelmonUtils().getPixelmonItemStack("light_ball"), "§6§lShiny");
-        item1.setLore("Click here to select the", "§6Shiny §7option.");
+        ShinyConfig config = FusionPixelmon.getInstance().getConfiguration().getShinyConfig();
+        InvItem item1 = new InvItem(REG.getPixelmonUtils().getPixelmonItemStack("light_ball"), "§6§l"+config.ShinyTRUE());
+        item1.setLore(config.ShinyTrueChoose());
         page.setItem(21, item1, event -> {
             if (!shops.pokemon.isShiny()) shops.getSelectedOptions().put(getOption(), true);
             else shops.getSelectedOptions().remove(getOption());
             builder.setSelectedItem(item1.getItemStack());
         });
 
-        InvItem item2 = new InvItem(REG.getPixelmonUtils().getPixelmonItemStack("iron_ball"), "§8§lNon-Shiny");
-        item2.setLore("Click here to select the", "§8Non-Shiny §7option.");
+        InvItem item2 = new InvItem(REG.getPixelmonUtils().getPixelmonItemStack("iron_ball"), "§8§l"+config.ShinyFALSE());
+        item2.setLore(config.ShinyFalseChoose());
         page.setItem(23, item2, event -> {
             if (shops.pokemon.isShiny()) shops.getSelectedOptions().put(getOption(), false);
             else shops.getSelectedOptions().remove(getOption());
@@ -52,8 +58,9 @@ public class ShinyShop extends BaseShop {
 
     @Override
     protected void priceSummaries() {
-        addPriceSummary("Add Shininess", getPriceOf(ConfigKeyConstants.ADD, 4000));
-        addPriceSummary("Remove Shininess", getPriceOf(ConfigKeyConstants.REMOVE, 125));
+        ShinyConfig config = FusionPixelmon.getInstance().getConfiguration().getShinyConfig();
+        addPriceSummary(config.ShinyCPriceSummary(), getPriceOf(ConfigKeyConstants.ADD, 4000));
+        addPriceSummary(config.ShinyDPriceSummary(), getPriceOf(ConfigKeyConstants.REMOVE, 125));
     }
 
     @Override
@@ -68,7 +75,7 @@ public class ShinyShop extends BaseShop {
     }
 
     private static class ConfigKeyConstants {
-        private static final String ADD = "add";
-        private static final String REMOVE = "remove";
+        private static final String ADD = "選擇";
+        private static final String REMOVE = "移除";
     }
 }

@@ -13,6 +13,7 @@ import me.fusiondev.fusionpixelmon.impl.GrammarUtils;
 import me.fusiondev.fusionpixelmon.impl.TimeUtils;
 import me.fusiondev.fusionpixelmon.modules.arcplates.AbstractArcPlatesUI;
 import me.fusiondev.fusionpixelmon.sponge.SpongeFusionPixelmon;
+import me.fusiondev.fusionpixelmon.voc.ZenConfig;
 import net.minecraft.util.ResourceLocation;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Keys;
@@ -37,7 +38,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 public class SpongeArcPlates extends AbstractArcPlatesUI {
-
+    ZenConfig config = FusionPixelmon.getInstance().getConfiguration().getZenConfig();
     public SpongeArcPlates() {
         super(SpongeFusionPixelmon.getInstance().getConfigDir().resolve("arcplates").toFile());
     }
@@ -103,7 +104,7 @@ public class SpongeArcPlates extends AbstractArcPlatesUI {
                             if (pokemon.getHeldItemAsItemHeld() instanceof ItemPlate) {
                                 ItemPlate heldItemPlate = (ItemPlate) pokemon.getHeldItemAsItemHeld();
                                 if (selectedItemPlate.equals(heldItemPlate)) {
-                                    player.sendMessage(Text.of(Color.RED + "That Plate is already equipped!"));
+                                    player.sendMessage(Text.of(Color.RED + config.ZenSpongeError1()));
                                     return;
                                 } else {
                                     ItemType heldItemType = getType(Objects.requireNonNull(heldItemPlate.getRegistryName()));
@@ -113,7 +114,7 @@ public class SpongeArcPlates extends AbstractArcPlatesUI {
                                                 data.add(p.i);
                                                 break;
                                             } else {
-                                                player.sendMessage(Text.of(Color.RED + "Cant unequip " + GrammarUtils.cap(p.name()) + " Plate because there is another in Storage! Please remove the one in Storage first before unequiping."));
+                                                player.sendMessage(Text.of(Color.RED + config.ZenSpongeError2() + GrammarUtils.cap(p.name()) + config.ZenSpongeError3()));
                                                 return;
                                             }
                                         }
@@ -122,9 +123,9 @@ public class SpongeArcPlates extends AbstractArcPlatesUI {
                             }
                             pokemon.setHeldItem(new net.minecraft.item.ItemStack(selectedItemPlate));
                             data.remove(getIDFromSlot(slot));
-                            player.sendMessage(Text.of(Color.GREEN + "Plate equipped!"));
+                            player.sendMessage(Text.of(Color.GREEN + config.ZenSpongeEquip()));
                         } else
-                            player.sendMessage(Text.of(Color.RED + "Cannot equip Plate because Pokemon is currently holding something!"));
+                            player.sendMessage(Text.of(Color.RED + config.ZenSpongeError4()));
                     }
                     // Right clicking plate in GUI
                     else if (event instanceof ClickInventoryEvent.Secondary) {
@@ -136,7 +137,7 @@ public class SpongeArcPlates extends AbstractArcPlatesUI {
                         if (playerInv.getMainGrid().canFit(selected)) {
                             ((Player) player.get()).getInventory().offer(selected);
                             data.remove(getIDFromSlot(slot));
-                        } else player.sendMessage(Text.of(Color.RED + "Your inventory is full!"));
+                        } else player.sendMessage(Text.of(Color.RED + config.ZenSpongeErro5()));
                     }
                 }
             }
@@ -206,7 +207,6 @@ public class SpongeArcPlates extends AbstractArcPlatesUI {
             armor.offer(Keys.HAS_GRAVITY, false);
             armor.offer(Keys.ARMOR_STAND_MARKER, true);
             armor.offer(Keys.INVISIBLE, true);
-            armor.offer(Keys.IS_SILENT, true);
             armor.setCreator(((Entity) entityPixelmon.getPokemonData().getOwnerPlayer()).getUniqueId());
             ARMORS[plate.i] = armor;
         }

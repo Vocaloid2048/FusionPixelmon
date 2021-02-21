@@ -1,5 +1,6 @@
 package me.fusiondev.fusionpixelmon.modules.pokedesigner.ui;
 
+import me.fusiondev.fusionpixelmon.FusionPixelmon;
 import me.fusiondev.fusionpixelmon.api.colour.Color;
 import me.fusiondev.fusionpixelmon.api.colour.DyeColor;
 import me.fusiondev.fusionpixelmon.api.colour.IColourWrapper;
@@ -13,6 +14,8 @@ import me.fusiondev.fusionpixelmon.api.ui.Shops;
 import me.fusiondev.fusionpixelmon.impl.GrammarUtils;
 import me.fusiondev.fusionpixelmon.impl.colour.ColourWrapper;
 import me.fusiondev.fusionpixelmon.impl.pixelmon.PokemonWrapper;
+import me.fusiondev.fusionpixelmon.voc.NickConfig;
+import me.fusiondev.fusionpixelmon.voc.TranslateConfig;
 
 public class NickShop extends BaseShop {
     public NickShop(Shops shops) {
@@ -24,14 +27,17 @@ public class NickShop extends BaseShop {
         return Shops.Options.NICK;
     }
 
+    NickConfig config = FusionPixelmon.getInstance().getConfiguration().getNickConfig();
+    TranslateConfig Tconfig = FusionPixelmon.getInstance().getConfiguration().getTranslationConfig();
+
     @Override
     public InvPage buildPage() {
-        Builder builder = new Builder("§0Nick Modification", "pokeeditor-nick", 6)
-                .setInfoItemData("Nick Info",
-                        "To pick a nick colour or style for your",
-                        "Pokemon simply use the options above.",
-                        "Colours and styles can be bought at once.")
-                .setSelectedItemName("Selected Nick Colour")
+        Builder builder = new Builder("§0"+config.NickTitle(), "pokeeditor-nick", 6)
+                .setInfoItemData(config.NickInfoTitle(),
+                        config.NickInfoString1(),
+                        config.NickInfoString2(),
+                        config.NickInfoString3())
+                .setSelectedItemName(config.NickSelectedTitle())
                 .setSelectedSlot(46)
                 .setInfoSlot(48)
                 .setResetSlot(50)
@@ -45,7 +51,34 @@ public class NickShop extends BaseShop {
             AbstractItemStack itemStack = option.getItemType().to();
             if (option.getDyeColor() != null) itemStack.setColour(option.getDyeColor());
             //if (option.getDyeColor() != null) itemStack.offer(Keys.DYE_COLOR, option.getDyeColor());
-            InvItem item = new InvItem(itemStack, "§" + option.getCode() + GrammarUtils.cap(option.name()));
+
+            String optS =  GrammarUtils.cap(option.name());
+            if (optS.equals("Dark red")){optS = config.NickDarkRed();}
+            if (optS.equals("Red")){optS = config.NickRed();}
+            if (optS.equals("Gold")){optS = config.NickGold();}
+            if (optS.equals("Yellow")){optS = config.NickYellow();}
+            if (optS.equals("Dark green")){optS = config.NickDarkGreen();}
+            if (optS.equals("Green")){optS = config.NickGreen();}
+            if (optS.equals("Aqua")){optS = config.NickAqua();}
+            if (optS.equals("Dark aqua")){optS = config.NickDarkAqua();}
+            if (optS.equals("Dark blue")){optS = config.NickDarkBlue();}
+            if (optS.equals("Blue")){optS = config.NickBlue();}
+            if (optS.equals("Light purple")){optS = config.NickLightPurple();}
+            if (optS.equals("Purple")){optS = config.NickPurple();}
+            if (optS.equals("White")){optS = config.NickWhite();}
+            if (optS.equals("Gray")){optS = config.NickGray();}
+            if (optS.equals("Dark gray")){optS = config.NickDarkGray();}
+            if (optS.equals("Black")){optS = config.NickBlack();}
+            if (optS.equals("Dark purple")){optS = config.NickBlack();}
+
+            if (optS.equals("Obfuscated")){optS = config.NickObfuscated();}
+            if (optS.equals("Bold")){optS = config.NickBold();}
+            if (optS.equals("Strikethrough")){optS = config.NickStrikethrough();}
+            if (optS.equals("Underline")){optS = config.NickUnderline();}
+            if (optS.equals("Italic")){optS = config.NickItalic();}
+            if (optS.equals("Reset")){optS = config.NickReset();}
+
+            InvItem item = new InvItem(itemStack, "§" + option.getCode() + optS);
             page.setItem(slot, item, event -> {
                 IColourWrapper wrapper = (IColourWrapper) shops.getSelectedOptions().getOrDefault(getOption(), new ColourWrapper());
                 if (option.getColor().isStyle()) wrapper.setStyle(option.getColor());
@@ -69,8 +102,9 @@ public class NickShop extends BaseShop {
 
     @Override
     protected void priceSummaries() {
-        addPriceSummary("Change Colour", getPriceOf(ConfigKeyConstants.CHANGE_COLOUR, 10000));
-        addPriceSummary("Change Style", getPriceOf(ConfigKeyConstants.CHANGE_STYLE, 20000));
+        NickConfig config = FusionPixelmon.getInstance().getConfiguration().getNickConfig();
+        addPriceSummary(config.NickcolorPriceSummary(), getPriceOf(ConfigKeyConstants.CHANGE_COLOUR, 10000));
+        addPriceSummary(config.NickthemePriceSummary(), getPriceOf(ConfigKeyConstants.CHANGE_STYLE, 20000));
     }
 
     @Override

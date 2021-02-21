@@ -57,14 +57,14 @@ public class PokeSelectorUI {
                     consumer.accept(selectedPokemon);
                 });
             } else if (pokemon != null) {
-                partyItem = new InvItem(reg.getItemTypesRegistry().EGG(), "§3Unknown");
+                partyItem = new InvItem(reg.getItemTypesRegistry().EGG(), "§3未知");
                 pagePokeSelect.setItem(i, partyItem);
             } else {
                 //ItemStack itemStack = ItemStack.builder().itemType(ItemTypes.STAINED_GLASS_PANE).build();
                 //itemStack.offer(Keys.DYE_COLOR, DyeColors.WHITE);
                 AbstractItemStack itemStack = reg.getItemTypesRegistry().STAINED_GLASS_PANE().to();
                 itemStack.setColour(DyeColor.WHITE);
-                partyItem = new InvItem(itemStack, "§fEmpty party slot");
+                partyItem = new InvItem(itemStack, "§f空");
                 pagePokeSelect.setItem(i, partyItem);
             }
         }

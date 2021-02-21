@@ -12,7 +12,7 @@ pluginManagement {
 rootProject.name = "fusionpixelmon"
 include("fusionpixelmon-core")
 include("fusionpixelmon-sponge")
+include("fusionpixelmon-forge")
 include("fusionpixelmon-spigot")
 include("fusionpixelmon-data")
-include("fusionpixelmon-forge")
 include("buildSrc")
