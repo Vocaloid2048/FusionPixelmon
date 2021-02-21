@@ -105,3 +105,31 @@ To return the `fusionpixelmon.conf` config file back to the original, you can ei
 ## Links
 - [Discord](https://discord.gg/VFNTycm)
 - [Issue tracker](https://github.com/BrendonCurmi/FusionPixelmon/issues)
+
+## Extend Translation Function
+- Develop by Voc-夜芷冰
+  - ONLY SUPPORT Sponge / SpongeForge rn. Sorry...
+- You may change the custom words from en-UK (Default) to what you want
+- If u are using / Looking Traditional Chinese Translate, that you're lucky!
+- [zh-HK][zh-TW]You may just copy the "Ability" part till "Zen" part in voc.conf -> Paste on the fushionpixelmon.conf
+- Paste the plugin in "verE" file
+- [Easier and Stable]If you just want to use and don't want to make so much thing and want stable
+  -> Paste the .jar file from "verD" file to your mod file
+- If you're not [zh-HK][zh-TW], please read the next part
+
+## How to customize ?
+- BACKUP YOUR fushionpixelmon.conf FIRST !!!!!
+- Simply open config.xlsx
+- Type-in your own translation at the RIGHT SIDE (U may follow the DEMO to type-in)
+- Copy "Output" part to a notepad++ / any app can replace "\t" (Tab) to "" (nothing)
+- Then paste to your server's fushionpixelmon.conf
+- Paste the plugin in "verE" file
+
+## About This Function's Developer
+- Voc-夜芷冰, an amateur Android App developer
+- Also is an developer of Zgirls Tool (Xectorda)
+- If you got bugs -> Pls Message me via Discord
+- Discord ID : Voc-夜芷冰#2512 (U may add prefix "#fushionpixelmon" to your message )
+- Sorry for having so much bugs and translation problems... It's a rush work , just have around 48hrs to do.
+- I will keep update if I notice there have inneed ~
+- Finally , Happy Coding day ~
