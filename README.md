@@ -119,7 +119,7 @@ To return the `fusionpixelmon.conf` config file back to the original, you can ei
 
 ## How to customize ?
 - BACKUP YOUR fushionpixelmon.conf FIRST !!!!!
-- Simply open config.xlsx
+- Simply open \Tools\config.xlsx
 - Type-in your own translation at the RIGHT SIDE (U may follow the DEMO to type-in)
 - Copy "Output" part to a notepad++ / any app can replace "\t" (Tab) to "" (nothing)
 - Then paste to your server's fushionpixelmon.conf
